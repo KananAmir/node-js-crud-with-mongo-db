@@ -16,8 +16,9 @@ mongoose.connect(
 //DB TABLE
 const productSchema = new Schema({
   name: String,
-  price: Number,
-  status: Boolean,
+  supplierName: String,
+  unitPrice: Number,
+  unitsInStock: Number,
 });
 
 const Product = mongoose.model("Product", productSchema);
@@ -60,12 +61,28 @@ app.post("/products", (req, res) => {
   }
   var product = new Product({
     name: req.body.name,
-    price: req.body.price,
-    status: true,
+    supplierName: req.body.supplierName,
+    unitPrice: req.body.price,
+    unitsInStock: req.body.unitsInStock,
   });
   product.save();
   res.send("Success!!");
 });
+
+//Update by Id
+app.put('/products/:id', (req, res) => {
+
+    let id = req.params.id;
+
+    Product.findByIdAndUpdate(id, req.body, (err, doc) => {
+        if (!err) {
+            res.json({ 'message': 'success' });
+        }
+        else {
+            res.status(500).json(err);
+        }
+    })
+})
 
 //Delete by Id
 app.delete('/products/:id', (req, res) => {
@@ -78,8 +95,8 @@ app.delete('/products/:id', (req, res) => {
         else
             res.status(500).json(err)
     })
-
 })
+
 app.listen(8080, () => {
   console.log("Server is running!!");
 });
